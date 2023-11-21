@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mindbox-deployment
+  labels:
+    app: mindbox
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: mindbox
+  template:
+    metadata:
+      labels:
+        app: mindbox
+    spec:
+      containers:
+      - name: mindbox
+        image: hekar7/go-fot-mindbox:0.0.1
+        resources:
+          limits:
+            cpu: 0,2
+            memory: "128Mi"
+          requests:
+            cpu: 0,1
+            memory: "128Mi"
+        affinity:
+          podAntiAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             - labelSelector:
+                 matchExpressions:
+                   - key: "app"
+                     operator: In
+                     values:
+                     - mindbox
+               topologyKey: "hostname"
+        ports:
+        - containerPort: 3000
+        args:
+        - -cpus
+        - "2"
